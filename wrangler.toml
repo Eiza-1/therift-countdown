@@ -1,7 +1,7 @@
 # Cloudflare Pages Static Site Configuration
 # This configures Pages to serve the static files in the root directory
 
-name = "therift-countdown"
+name = "therift"
 compatibility_date = "2025-11-27"
 
 # Serve all files from the root directory as static assets
