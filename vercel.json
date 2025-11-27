@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "name": "therift-countdown",
+  "builds": [
+    { "src": "**/*", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/$1" }
+  ],
+  "env": {
+    "OMDB_API_KEY": "@omdb_api_key"
+  }
+}

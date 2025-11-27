@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entertainment Countdown Timer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="header-content">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Stranger Things Logo" class="header-logo" id="strangerThingsLogo">
+                <h1 class="main-title">Stranger Things - Season 5</h1>
+                <p class="subtitle">The Final Season Countdown</p>
+            </div>
+            <div class="show-selector">
+                <label for="show-dropdown">Select Show:</label>
+                <select id="show-dropdown">
+                    <option value="stranger-things-s5">Stranger Things - Season 5</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-btn active" data-tab="countdown">⏰ Countdown</button>
+            <button class="tab-btn" data-tab="chat">💬 Discuss</button>
+        </div>
+
+        <!-- COUNTDOWN TAB -->
+        <div id="countdown-tab" class="tab-content active">
+            <!-- Featured Show Section -->
+            <section class="featured-section">
+                <div class="featured-card">
+                    <div class="featured-header">
+                        <h2 id="featured-title">Season 5 Countdown</h2>
+                        <p id="featured-description" class="featured-description">The Final Season is Coming</p>
+                    </div>
+                    
+                    <!-- Primary Timer (Nigeria/Africa) -->
+                    <div class="primary-timer-container">
+                        <div class="primary-timer">
+                            <div class="timer-section">
+                                <div class="timer-number" id="primary-days">0</div>
+                                <div class="timer-label">Days</div>
+                            </div>
+                            <div class="timer-section">
+                                <div class="timer-number" id="primary-hours">0</div>
+                                <div class="timer-label">Hours</div>
+                            </div>
+                            <div class="timer-section">
+                                <div class="timer-number" id="primary-minutes">0</div>
+                                <div class="timer-label">Minutes</div>
+                            </div>
+                            <div class="timer-section">
+                                <div class="timer-number" id="primary-seconds">0</div>
+                                <div class="timer-label">Seconds</div>
+                            </div>
+                        </div>
+                        <div class="primary-location">
+                            <span class="location-emoji">🇳🇬</span>
+                            <span class="location-name">Nigeria (WAT)</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Global Timers Section -->
+            <section class="timers-section">
+                <h3 class="section-title">⏰ Release Times by Country ⏰</h3>
+                <div class="timers-grid" id="timers-grid">
+                    <!-- Timer cards will be generated here by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Info Section -->
+            <section class="info-section">
+                <div class="info-card">
+                    <h3>📺 About This Release</h3>
+                    <p id="show-info">Stranger Things Season 5 marks the epic conclusion of the beloved supernatural series from the Hawkins Lab universe.</p>
+                </div>
+                <div class="info-card">
+                    <h3>🌍 Global Coverage</h3>
+                    <p>Track release times across all major timezones and regions. See exactly when your favorite shows premiere in your country.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- CHAT TAB -->
+        <div id="chat-tab" class="tab-content">
+            <section class="chat-section">
+                <div class="chat-container">
+                    <!-- Sign-up Section -->
+                    <div class="chat-signup" id="chatSignup">
+                        <h2>💬 Join the Discussion</h2>
+                        <p>Enter your username to start chatting about Stranger Things Season 5!</p>
+                        <div class="signup-form">
+                            <input 
+                                type="text" 
+                                id="usernameInput" 
+                                placeholder="Enter your username..." 
+                                maxlength="20"
+                                class="username-input">
+                            <button id="joinChatBtn" class="join-btn">Join Chat</button>
+                        </div>
+                    </div>
+
+                    <!-- Chat Area (Hidden until username is entered) -->
+                    <div class="chat-area" id="chatArea" style="display: none;">
+                        <div class="chat-header">
+                            <h3>💬 Stranger Things Discussion</h3>
+                            <div class="current-user">
+                                <span>👤 <span id="currentUsername"></span></span>
+                                <button id="logoutBtn" class="logout-btn">Logout</button>
+                            </div>
+                        </div>
+
+                        <!-- Messages Display -->
+                        <div class="messages-container" id="messagesContainer">
+                            <!-- Messages will appear here -->
+                        </div>
+
+                        <!-- Message Input -->
+                        <div class="message-input-area">
+                            <input 
+                                type="text" 
+                                id="messageInput" 
+                                placeholder="Type your message..." 
+                                class="message-input">
+                            <button id="sendBtn" class="send-btn">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>📅 Last Updated: <span id="last-updated">Loading...</span></p>
+            <p class="footer-credit">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23660000' opacity='0.9'/%3E%3Cpath d='M50 20 Q60 30 65 50 Q60 70 50 80 Q40 70 35 50 Q40 30 50 20' fill='%23FF4444'/%3E%3Ccircle cx='50' cy='50' r='8' fill='%23000'/%3E%3C/svg%3E" alt="Vecna" class="vecna-icon">
+                Built with Vecna for the Upside Down
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23660000' opacity='0.9'/%3E%3Cpath d='M50 20 Q60 30 65 50 Q60 70 50 80 Q40 70 35 50 Q40 30 50 20' fill='%23FF4444'/%3E%3Ccircle cx='50' cy='50' r='8' fill='%23000'/%3E%3C/svg%3E" alt="Vecna" class="vecna-icon">
+            </p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="chat.js"></script>
+</body>
+</html>

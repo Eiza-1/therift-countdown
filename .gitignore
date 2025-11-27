@@ -1,0 +1,26 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+*.env
+/.env.local
+/.cache
+/.parcel-cache
+/*.zip
+/*.tar.gz
+coverage/
+/.vscode/
+/.history/
+.idea/
+Thumbs.db
+# OS files
+desktop.ini
+
+# Build outputs
+build/
+public/
+
+# Secrets and keys
+*.pem
+*.key
+secrets.json
