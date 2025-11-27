@@ -1,23 +1,13 @@
-# Cloudflare Pages Configuration
-# This file is optional but helpful for local development with Wrangler
+# Cloudflare Pages Static Site Configuration
+# This configures Pages to serve the static files in the root directory
 
 name = "therift-countdown"
-type = "javascript"
-account_id = ""
-workers_dev = true
+compatibility_date = "2025-11-27"
 
+# Serve all files from the root directory as static assets
+[assets]
+directory = "."
+
+# Environment variables for production
 [env.production]
-route = ""
-zone_id = ""
-
-[build]
-command = ""
-cwd = ""
-watch_paths = []
-
-[[env.production.triggers.crons]]
-cron = ""
-
-[vars]
-# OMDB_API_KEY will be set in Cloudflare Pages dashboard
-OMDB_API_KEY = "YOUR_OMDB_API_KEY_HERE"
+vars = { OMDB_API_KEY = "YOUR_OMDB_API_KEY_HERE" }
