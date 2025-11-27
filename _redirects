@@ -1,0 +1,5 @@
+# Cloudflare Pages Routing
+# Routes all requests to index.html for single-page app behavior
+
+/api/* 200
+/* /index.html 200
