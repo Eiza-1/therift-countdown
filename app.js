@@ -1,19 +1,17 @@
 /* ============================================
-   ENTERTAINMENT COUNTDOWN TIMER - JavaScript
-   Real-time countdown with OMDB API integration
+   THERIFT - COUNTDOWN APP
+   Stranger Things Season 5 Countdown
    ============================================ */
 
-// ============================================
-// CONFIGURATION & DATA
-// ============================================
-
-// Movie/Show Database (extensible structure for future additions)
+// Movie/Show Database
 const SHOWS_DATABASE = {
     'stranger-things-s5': {
-        title: '🔮 Stranger Things - Season 5 🔮',
-        description: 'The final season is coming - the epic conclusion of Hawkins Lab universe',
-        imdbId: 'tt3749900', // Stranger Things IMDB ID
-        releaseDate: '2025-02-14', // Global base date
+        title: 'Stranger Things - Season 5',
+        description: 'The epic final chapter awaits. Prepare yourself for the ultimate battle against the darkness.',
+        imdbId: 'tt3749900',
+        releaseDate: '2025-02-14',
+        rating: '8.7',
+        votes: '1.2M',
         countries: {
             'Nigeria': { emoji: '🇳🇬', timezone: 'Africa/Lagos', offset: 1 },
             'USA (East)': { emoji: '🇺🇸', timezone: 'America/New_York', offset: -5 },
@@ -34,23 +32,12 @@ const SHOWS_DATABASE = {
             'Hong Kong': { emoji: '🇭🇰', timezone: 'Asia/Hong_Kong', offset: 8 },
         }
     }
-    // Future shows can be added like this:
-    // 'avatar-3': { title: '🌍 Avatar 3 🌍', ... }
-};
-
-// OMDB API Configuration
-const OMDB_CONFIG = {
-    apiKey: 'YOUR_OMDB_API_KEY_HERE', // Get free key from http://www.omdbapi.com/apikey.aspx
-    baseUrl: 'https://www.omdbapi.com/'
 };
 
 // ============================================
 // UTILITY FUNCTIONS
 // ============================================
 
-/**
- * Calculate time difference from now to target date
- */
 function calculateTimeRemaining(targetDate) {
     const now = new Date();
     const target = new Date(targetDate);
@@ -69,96 +56,16 @@ function calculateTimeRemaining(targetDate) {
     };
 }
 
-/**
- * Pad numbers with leading zero
- */
 function padNumber(num) {
     return String(num).padStart(2, '0');
-}
-
-/**
- * Format date to display string
- */
-function formatDate(date) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return new Date(date).toLocaleDateString('en-US', options);
-}
-
-/**
- * Get release date for a specific country
- * (In a real scenario, you'd fetch this from OMDB or a database)
- */
-function getReleaseDate(showId, country) {
-    const show = SHOWS_DATABASE[showId];
-    if (!show) return null;
-
-    // For most countries, use the base release date
-    // You can customize per-country release dates here
-    return show.releaseDate;
-}
-
-// ============================================
-// OMDB API INTEGRATION
-// ============================================
-
-/**
- * Fetch show data from OMDB API
- * Note: You need to get a free API key from http://www.omdbapi.com/
- */
-async function fetchShowDataFromOMDB(imdbId) {
-    try {
-        if (OMDB_CONFIG.apiKey === 'YOUR_OMDB_API_KEY_HERE') {
-            console.log('Note: Set your OMDB API key in OMDB_CONFIG to fetch live data');
-            return null;
-        }
-
-        const url = `${OMDB_CONFIG.baseUrl}?i=${imdbId}&apikey=${OMDB_CONFIG.apiKey}&type=series`;
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.Response === 'True') {
-            return data;
-        }
-        return null;
-    } catch (error) {
-        console.error('Error fetching OMDB data:', error);
-        return null;
-    }
-}
-
-/**
- * Search for a show on OMDB
- */
-async function searchShowOnOMDB(searchTerm) {
-    try {
-        if (OMDB_CONFIG.apiKey === 'YOUR_OMDB_API_KEY_HERE') {
-            console.log('Note: Set your OMDB API key to enable search');
-            return [];
-        }
-
-        const url = `${OMDB_CONFIG.baseUrl}?s=${encodeURIComponent(searchTerm)}&apikey=${OMDB_CONFIG.apiKey}&type=series`;
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.Response === 'True') {
-            return data.Search || [];
-        }
-        return [];
-    } catch (error) {
-        console.error('Error searching OMDB:', error);
-        return [];
-    }
 }
 
 // ============================================
 // DOM MANIPULATION
 // ============================================
 
-/**
- * Create a timer card for each country
- */
 function createTimerCard(showId, countryName, countryData) {
-    const releaseDate = getReleaseDate(showId, countryName);
+    const releaseDate = SHOWS_DATABASE[showId].releaseDate;
     const time = calculateTimeRemaining(releaseDate);
 
     const card = document.createElement('div');
@@ -198,11 +105,10 @@ function createTimerCard(showId, countryName, countryData) {
     return card;
 }
 
-/**
- * Update all timers
- */
 function updateAllTimers() {
     const timersGrid = document.getElementById('timers-grid');
+    if (!timersGrid) return;
+    
     const cards = timersGrid.querySelectorAll('.timer-card');
 
     cards.forEach(card => {
@@ -216,35 +122,24 @@ function updateAllTimers() {
             seconds: card.querySelector('[data-timer="seconds"]')
         };
 
-        // Only update DOM when value actually changes to avoid layout churn
         Object.entries(timers).forEach(([key, el]) => {
             if (!el) return;
             const newVal = padNumber(time[key]);
             if (el.textContent !== newVal) {
                 el.textContent = newVal;
-                // toggle a lightweight class for CSS animation (no inline styles)
                 el.classList.add('tick');
-                // remove the class after animation completes
-                window.setTimeout(() => el.classList.remove('tick'), 600);
+                window.setTimeout(() => el.classList.remove('tick'), 450);
             }
         });
     });
 
-    // Update primary timer (Nigeria)
     updatePrimaryTimer();
     updateLastUpdated();
 }
 
-/**
- * Update primary timer (Nigeria/Main region)
- */
 function updatePrimaryTimer() {
-    const currentShow = document.getElementById('show-dropdown').value;
-    const show = SHOWS_DATABASE[currentShow];
-
-    if (!show) return;
-
-    const releaseDate = getReleaseDate(currentShow, 'Nigeria');
+    const show = SHOWS_DATABASE['stranger-things-s5'];
+    const releaseDate = show.releaseDate;
     const time = calculateTimeRemaining(releaseDate);
 
     const timerElements = {
@@ -254,28 +149,17 @@ function updatePrimaryTimer() {
         seconds: document.getElementById('primary-seconds')
     };
 
-    // Only update if changed
-    if (timerElements.days) {
-        const v = padNumber(time.days);
-        if (timerElements.days.textContent !== v) { timerElements.days.textContent = v; timerElements.days.classList.add('tick'); setTimeout(() => timerElements.days.classList.remove('tick'), 600); }
-    }
-    if (timerElements.hours) {
-        const v = padNumber(time.hours);
-        if (timerElements.hours.textContent !== v) { timerElements.hours.textContent = v; timerElements.hours.classList.add('tick'); setTimeout(() => timerElements.hours.classList.remove('tick'), 600); }
-    }
-    if (timerElements.minutes) {
-        const v = padNumber(time.minutes);
-        if (timerElements.minutes.textContent !== v) { timerElements.minutes.textContent = v; timerElements.minutes.classList.add('tick'); setTimeout(() => timerElements.minutes.classList.remove('tick'), 600); }
-    }
-    if (timerElements.seconds) {
-        const v = padNumber(time.seconds);
-        if (timerElements.seconds.textContent !== v) { timerElements.seconds.textContent = v; timerElements.seconds.classList.add('tick'); setTimeout(() => timerElements.seconds.classList.remove('tick'), 600); }
-    }
+    Object.entries(timerElements).forEach(([key, el]) => {
+        if (!el) return;
+        const v = padNumber(time[key]);
+        if (el.textContent !== v) {
+            el.textContent = v;
+            el.classList.add('tick');
+            window.setTimeout(() => el.classList.remove('tick'), 450);
+        }
+    });
 }
 
-/**
- * Update last updated timestamp
- */
 function updateLastUpdated() {
     const now = new Date();
     const timeString = now.toLocaleTimeString('en-US', { 
@@ -284,128 +168,81 @@ function updateLastUpdated() {
         second: '2-digit',
         hour12: true 
     });
-    document.getElementById('last-updated').textContent = timeString;
+    const el = document.getElementById('last-updated');
+    if (el) el.textContent = timeString;
 }
 
-/**
- * Render show information
- */
 function renderShowInfo(showId) {
     const show = SHOWS_DATABASE[showId];
     if (!show) return;
 
-    document.getElementById('featured-title').textContent = 'Season 5 Countdown';
-    document.getElementById('featured-description').textContent = show.description;
-    document.getElementById('show-info').textContent = show.description;
+    const titleEl = document.getElementById('featured-title');
+    const descEl = document.getElementById('featured-description');
+    const infoEl = document.getElementById('show-info');
+    const ratingEl = document.getElementById('imdb-rating');
+    const votesEl = document.getElementById('rating-votes');
+    const premiereDateEl = document.getElementById('premiere-info');
+    const releaseDateEl = document.getElementById('release-date');
+
+    if (titleEl) titleEl.textContent = show.title;
+    if (descEl) descEl.textContent = show.description;
+    if (infoEl) infoEl.textContent = show.description;
+    if (ratingEl) ratingEl.textContent = show.rating + '/10';
+    if (votesEl) votesEl.textContent = show.votes;
+    if (premiereDateEl) premiereDateEl.textContent = new Date(show.releaseDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    if (releaseDateEl) releaseDateEl.textContent = new Date(show.releaseDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-/**
- * Initialize timers grid for a show
- */
 function initializeTimersGrid(showId) {
     const show = SHOWS_DATABASE[showId];
     if (!show) return;
 
     const timersGrid = document.getElementById('timers-grid');
-    timersGrid.innerHTML = ''; // Clear existing cards
+    if (!timersGrid) return;
+
+    timersGrid.innerHTML = '';
 
     Object.entries(show.countries).forEach(([countryName, countryData], index) => {
         const card = createTimerCard(showId, countryName, countryData);
-        card.style.animation = `fadeInUp 0.6s ease-out ${index * 0.05}s both`;
+        card.style.animationDelay = `${index * 0.05}s`;
         timersGrid.appendChild(card);
     });
 }
 
 // ============================================
-// EVENT LISTENERS
+// SECTION NAVIGATION
+// ============================================
+
+function initializeNavigation() {
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const sections = document.querySelectorAll('.section');
+
+    navBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetSection = btn.getAttribute('data-section') + '-section';
+
+            navBtns.forEach(b => b.classList.remove('active'));
+            sections.forEach(s => s.classList.remove('active'));
+
+            btn.classList.add('active');
+            const section = document.getElementById(targetSection);
+            if (section) section.classList.add('active');
+        });
+    });
+}
+
+// ============================================
+// INITIALIZATION
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize with first show
-    const firstShowId = Object.keys(SHOWS_DATABASE)[0];
+    const firstShowId = 'stranger-things-s5';
     
     renderShowInfo(firstShowId);
     initializeTimersGrid(firstShowId);
     updateAllTimers();
+    initializeNavigation();
 
     // Update timers every second
     setInterval(updateAllTimers, 1000);
-
-    // Handle show dropdown change
-    const showDropdown = document.getElementById('show-dropdown');
-    showDropdown.addEventListener('change', (e) => {
-        const selectedShow = e.target.value;
-        renderShowInfo(selectedShow);
-        initializeTimersGrid(selectedShow);
-        updateAllTimers();
-    });
 });
-
-// ============================================
-// API HELPER FUNCTIONS FOR FUTURE USE
-// ============================================
-
-/**
- * Add a new show to the database (call this to add new movies/shows)
- * Usage: addNewShow('avatar-3', { title: '🌍 Avatar 3 🌍', ... })
- */
-function addNewShow(showId, showData) {
-    SHOWS_DATABASE[showId] = showData;
-    
-    // Update dropdown
-    const dropdown = document.getElementById('show-dropdown');
-    const option = document.createElement('option');
-    option.value = showId;
-    option.textContent = showData.title.replace(/[🌍🔮]/g, '').trim();
-    dropdown.appendChild(option);
-
-    console.log(`✅ Added new show: ${showId}`);
-}
-
-/**
- * Get all available shows
- */
-function getAllShows() {
-    return Object.entries(SHOWS_DATABASE).map(([id, data]) => ({
-        id,
-        title: data.title,
-        description: data.description,
-        releaseDate: data.releaseDate
-    }));
-}
-
-/**
- * Export current state (useful for saving preferences)
- */
-function exportState() {
-    return {
-        timestamp: new Date().toISOString(),
-        shows: getAllShows(),
-        currentShow: document.getElementById('show-dropdown').value
-    };
-}
-
-// ============================================
-// TIPS FOR SETUP
-// ============================================
-
-/*
-HOW TO GET OMDB API KEY:
-1. Visit: http://www.omdbapi.com/apikey.aspx
-2. Sign up for a free account
-3. Copy your API key
-4. Replace 'YOUR_OMDB_API_KEY_HERE' in OMDB_CONFIG with your actual key
-
-HOW TO ADD A NEW SHOW:
-Example: addNewShow('dune-3', {
-    title: '🪐 Dune - Part 3 🪐',
-    description: 'The continuation of the epic space saga',
-    imdbId: 'tt1160419',
-    releaseDate: '2026-02-26',
-    countries: { ... } // Copy the structure from Stranger Things
-});
-
-OMDB API ENDPOINTS YOU CAN USE:
-- fetchShowDataFromOMDB(imdbId) - Get details by IMDB ID
-- searchShowOnOMDB(searchTerm) - Search for shows/movies
-*/

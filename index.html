@@ -3,151 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entertainment Countdown Timer</title>
+    <title>TheRift - Entertainment Countdown | Stranger Things S5</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <!-- Header Section -->
+        <!-- HEADER -->
         <header class="header">
-            <div class="header-content">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Stranger Things Logo" class="header-logo" id="strangerThingsLogo">
-                <h1 class="main-title">Stranger Things - Season 5</h1>
-                <p class="subtitle">The Final Season Countdown</p>
+            <div class="header-top">
+                <h1 class="logo">🎬 TheRift</h1>
+                <p class="tagline">Your Ultimate Entertainment Countdown</p>
             </div>
-            <div class="show-selector">
-                <label for="show-dropdown">Select Show:</label>
-                <select id="show-dropdown">
-                    <option value="stranger-things-s5">Stranger Things - Season 5</option>
-                </select>
-            </div>
+            <nav class="nav-tabs">
+                <button class="nav-btn active" data-section="countdown">Countdown</button>
+                <button class="nav-btn" data-section="details">Details</button>
+                <button class="nav-btn" data-section="discuss">Discuss</button>
+            </nav>
         </header>
 
-        <!-- Tab Navigation -->
-        <div class="tab-navigation">
-            <button class="tab-btn active" data-tab="countdown">⏰ Countdown</button>
-            <button class="tab-btn" data-tab="chat">💬 Discuss</button>
-        </div>
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
 
-        <!-- COUNTDOWN TAB -->
-        <div id="countdown-tab" class="tab-content active">
-            <!-- Featured Show Section -->
-            <section class="featured-section">
-                <div class="featured-card">
-                    <div class="featured-header">
-                        <h2 id="featured-title">Season 5 Countdown</h2>
-                        <p id="featured-description" class="featured-description">The Final Season is Coming</p>
-                    </div>
-                    
-                    <!-- Primary Timer (Nigeria/Africa) -->
-                    <div class="primary-timer-container">
-                        <div class="primary-timer">
-                            <div class="timer-section">
-                                <div class="timer-number" id="primary-days">0</div>
-                                <div class="timer-label">Days</div>
-                            </div>
-                            <div class="timer-section">
-                                <div class="timer-number" id="primary-hours">0</div>
-                                <div class="timer-label">Hours</div>
-                            </div>
-                            <div class="timer-section">
-                                <div class="timer-number" id="primary-minutes">0</div>
-                                <div class="timer-label">Minutes</div>
-                            </div>
-                            <div class="timer-section">
-                                <div class="timer-number" id="primary-seconds">0</div>
-                                <div class="timer-label">Seconds</div>
-                            </div>
-                        </div>
-                        <div class="primary-location">
-                            <span class="location-emoji">🇳🇬</span>
-                            <span class="location-name">Nigeria (WAT)</span>
+            <!-- COUNTDOWN SECTION -->
+            <section id="countdown-section" class="section active">
+                <!-- Featured Hero -->
+                <div class="hero-banner">
+                    <div class="hero-content">
+                        <h2 id="featured-title" class="hero-title">Stranger Things - Season 5</h2>
+                        <p id="featured-description" class="hero-subtitle">The epic final chapter awaits. Prepare yourself for the ultimate battle against the darkness.</p>
+                        
+                        <!-- Rating Section -->
+                        <div class="rating-badge">
+                            <span class="rating-label">IMDb Rating</span>
+                            <span class="rating-value" id="imdb-rating">8.7/10</span>
+                            <span class="rating-label">Votes: <span id="rating-votes">1.2M</span></span>
                         </div>
                     </div>
                 </div>
+
+                <!-- Primary Countdown Timer (Nigeria) -->
+                <div class="countdown-card featured">
+                    <div class="countdown-header">
+                        <h3>🇳🇬 Release in Nigeria (Lagos Time)</h3>
+                        <p class="countdown-date" id="release-date">February 14, 2025</p>
+                    </div>
+                    <div class="countdown-timer primary-timer">
+                        <div class="timer-unit">
+                            <span class="timer-value" id="primary-days">45</span>
+                            <span class="timer-label">Days</span>
+                        </div>
+                        <div class="timer-unit">
+                            <span class="timer-value" id="primary-hours">12</span>
+                            <span class="timer-label">Hours</span>
+                        </div>
+                        <div class="timer-unit">
+                            <span class="timer-value" id="primary-minutes">30</span>
+                            <span class="timer-label">Minutes</span>
+                        </div>
+                        <div class="timer-unit">
+                            <span class="timer-value" id="primary-seconds">45</span>
+                            <span class="timer-label">Seconds</span>
+                        </div>
+                    </div>
+                    <p class="last-updated">Last updated: <span id="last-updated">--:--:--</span></p>
+                </div>
+
+                <!-- Global Release Times -->
+                <div class="section-header">
+                    <h3>Global Release Times</h3>
+                    <p>See when it premieres in your timezone</p>
+                </div>
+                <div class="timers-grid" id="timers-grid"></div>
             </section>
 
-            <!-- Global Timers Section -->
-            <section class="timers-section">
-                <h3 class="section-title">⏰ Release Times by Country ⏰</h3>
-                <div class="timers-grid" id="timers-grid">
-                    <!-- Timer cards will be generated here by JavaScript -->
+            <!-- DETAILS SECTION -->
+            <section id="details-section" class="section">
+                <!-- Show Info Cards -->
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h4>📺 Series</h4>
+                        <p>Stranger Things</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>📅 Premiere Date</h4>
+                        <p id="premiere-info">February 14, 2025</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>🌍 Platform</h4>
+                        <p>Netflix</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>🎬 Genre</h4>
+                        <p>Drama, Horror, Sci-Fi</p>
+                    </div>
+                </div>
+
+                <!-- Synopsis -->
+                <div class="synopsis-section">
+                    <h3>Synopsis</h3>
+                    <p id="show-info">The final season is here. Hawkins faces its greatest threat yet as the Upside Down makes its ultimate move. The group must band together for one final battle.</p>
+                </div>
+
+                <!-- Cast Section -->
+                <div class="cast-section">
+                    <h3>Cast</h3>
+                    <div class="cast-grid">
+                        <div class="cast-card">
+                            <div class="cast-avatar">👤</div>
+                            <p class="cast-name">Winona Ryder</p>
+                            <p class="cast-role">Joyce Byers</p>
+                        </div>
+                        <div class="cast-card">
+                            <div class="cast-avatar">👤</div>
+                            <p class="cast-name">David Harbour</p>
+                            <p class="cast-role">Jim Hopper</p>
+                        </div>
+                        <div class="cast-card">
+                            <div class="cast-avatar">👤</div>
+                            <p class="cast-name">Finn Wolfhard</p>
+                            <p class="cast-role">Mike Wheeler</p>
+                        </div>
+                        <div class="cast-card">
+                            <div class="cast-avatar">👤</div>
+                            <p class="cast-name">Millie Bobby Brown</p>
+                            <p class="cast-role">Eleven</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews Section -->
+                <div class="reviews-section">
+                    <h3>Top Reviews</h3>
+                    <div class="reviews-container">
+                        <div class="review-card">
+                            <div class="review-header">
+                                <span class="review-author">⭐ TV Critic Review</span>
+                                <span class="review-score">9/10</span>
+                            </div>
+                            <p class="review-text">"A masterpiece. The final season brings closure and emotional depth like never before. Highly recommended!"</p>
+                        </div>
+                        <div class="review-card">
+                            <div class="review-header">
+                                <span class="review-author">👥 Fan Review</span>
+                                <span class="review-score">10/10</span>
+                            </div>
+                            <p class="review-text">"Everything we've been waiting for. The plot twists, the action, the emotions — absolutely incredible!"</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <!-- Info Section -->
-            <section class="info-section">
-                <div class="info-card">
-                    <h3>📺 About This Release</h3>
-                    <p id="show-info">Stranger Things Season 5 marks the epic conclusion of the beloved supernatural series from the Hawkins Lab universe.</p>
-                </div>
-                <div class="info-card">
-                    <h3>🌍 Global Coverage</h3>
-                    <p>Track release times across all major timezones and regions. See exactly when your favorite shows premiere in your country.</p>
-                </div>
-            </section>
-        </div>
-
-        <!-- CHAT TAB -->
-        <div id="chat-tab" class="tab-content">
-            <section class="chat-section">
+            <!-- DISCUSS SECTION -->
+            <section id="discuss-section" class="section">
                 <div class="chat-container">
-                    <!-- Sign-up Section -->
-                    <div class="chat-signup" id="chatSignup">
-                        <h2>💬 Join the Discussion</h2>
-                        <p>Enter your username to start chatting about Stranger Things Season 5!</p>
+                    <!-- Chat Signup -->
+                    <div id="chatSignup" class="chat-signup">
+                        <h2>Join the Discussion</h2>
+                        <p>Share your thoughts and theories about the final season</p>
                         <div class="signup-form">
-                            <input 
-                                type="text" 
-                                id="usernameInput" 
-                                placeholder="Enter your username..." 
-                                maxlength="20"
-                                class="username-input">
+                            <input type="text" id="usernameInput" class="username-input" placeholder="Enter your username" maxlength="20">
                             <button id="joinChatBtn" class="join-btn">Join Chat</button>
                         </div>
                     </div>
 
-                    <!-- Chat Area (Hidden until username is entered) -->
-                    <div class="chat-area" id="chatArea" style="display: none;">
+                    <!-- Chat Area -->
+                    <div id="chatArea" class="chat-area" style="display: none;">
                         <div class="chat-header">
-                            <h3>💬 Stranger Things Discussion</h3>
+                            <h3>💬 Live Discussion</h3>
                             <div class="current-user">
-                                <span>👤 <span id="currentUsername"></span></span>
+                                <span>Logged in as: <strong id="currentUsername"></strong></span>
                                 <button id="logoutBtn" class="logout-btn">Logout</button>
                             </div>
                         </div>
-
-                        <!-- Messages Display -->
-                        <div class="messages-container" id="messagesContainer">
-                            <!-- Messages will appear here -->
-                        </div>
-
-                        <!-- Message Input -->
+                        <div id="messagesContainer" class="messages-container"></div>
                         <div class="message-input-area">
-                            <input 
-                                type="text" 
-                                id="messageInput" 
-                                placeholder="Type your message..." 
-                                class="message-input">
+                            <input type="text" id="messageInput" class="message-input" placeholder="Share your thoughts...">
                             <button id="sendBtn" class="send-btn">Send</button>
                         </div>
                     </div>
                 </div>
             </section>
-        </div>
+        </main>
 
-        <!-- Footer -->
+        <!-- FOOTER -->
         <footer class="footer">
-            <p>📅 Last Updated: <span id="last-updated">Loading...</span></p>
-            <p class="footer-credit">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23660000' opacity='0.9'/%3E%3Cpath d='M50 20 Q60 30 65 50 Q60 70 50 80 Q40 70 35 50 Q40 30 50 20' fill='%23FF4444'/%3E%3Ccircle cx='50' cy='50' r='8' fill='%23000'/%3E%3C/svg%3E" alt="Vecna" class="vecna-icon">
-                Built with Vecna for the Upside Down
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23660000' opacity='0.9'/%3E%3Cpath d='M50 20 Q60 30 65 50 Q60 70 50 80 Q40 70 35 50 Q40 30 50 20' fill='%23FF4444'/%3E%3Ccircle cx='50' cy='50' r='8' fill='%23000'/%3E%3C/svg%3E" alt="Vecna" class="vecna-icon">
-            </p>
+            <p>Built with 🖤 for the Upside Down</p>
+            <p class="footer-credit">© 2025 TheRift Countdown | Stranger Things © Netflix</p>
         </footer>
     </div>
 
-    <script src="app.js"></script>
-    <script src="chat.js"></script>
+    <script src="app.js" defer></script>
+    <script src="chat.js" defer></script>
 </body>
 </html>
