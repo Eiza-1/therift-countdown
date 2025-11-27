@@ -1,6 +1,7 @@
 /* ============================================
-   CHAT FORUM - JAVASCRIPT
+   CHAT FORUM - JAVASCRIPT (FIXED)
    Real-time messaging with localStorage
+   Edit & Delete Features
    ============================================ */
 
 // ============================================
@@ -10,8 +11,7 @@
 let currentUsername = null;
 const STORAGE_KEY = 'strangerThingsForum_messages';
 const USERNAME_KEY = 'strangerThingsForum_username';
-// store last rendered messages JSON to prevent unnecessary re-renders
-let _lastMessagesJSON = null;
+let editingMessageId = null;
 
 // ============================================
 // INITIALIZATION
@@ -19,7 +19,7 @@ let _lastMessagesJSON = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeChatSystem();
-    initializeTabNavigation();
+    initializeNavigation();
 });
 
 /**
@@ -34,50 +34,63 @@ function initializeChatSystem() {
         showChatArea();
     }
 
-    // Event listeners
-    document.getElementById('joinChatBtn').addEventListener('click', joinChat);
-    document.getElementById('usernameInput').addEventListener('keypress', (e) => {
+    // Event listeners for signup
+    const joinBtn = document.getElementById('joinChatBtn');
+    const usernameInput = document.getElementById('usernameInput');
+    if (joinBtn) joinBtn.addEventListener('click', joinChat);
+    if (usernameInput) usernameInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') joinChat();
     });
 
-    document.getElementById('sendBtn').addEventListener('click', sendMessage);
-    document.getElementById('messageInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
+    // Event listeners for chat
+    const sendBtn = document.getElementById('sendBtn');
+    const messageInput = document.getElementById('messageInput');
+    const logoutBtn = document.getElementById('logoutBtn');
+    
+    if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+    if (messageInput) messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
     });
+    if (logoutBtn) logoutBtn.addEventListener('click', logout);
 
-    document.getElementById('logoutBtn').addEventListener('click', logout);
-
-    // Load existing messages
+    // Initial load
     loadMessages();
 
-    // Auto-refresh messages every 1000ms for lower CPU impact
+    // Auto-refresh messages every 1000ms
     setInterval(loadMessages, 1000);
 }
 
 /**
  * Initialize tab navigation
  */
-function initializeTabNavigation() {
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
+function initializeNavigation() {
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const sections = document.querySelectorAll('.section');
 
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const tabName = button.getAttribute('data-tab');
+    navBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetSection = btn.getAttribute('data-section') + '-section';
 
-            // Remove active class from all buttons and contents
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
+            navBtns.forEach(b => b.classList.remove('active'));
+            sections.forEach(s => s.classList.remove('active'));
 
-            // Add active class to clicked button and corresponding content
-            button.classList.add('active');
-            document.getElementById(tabName + '-tab').classList.add('active');
+            btn.classList.add('active');
+            const section = document.getElementById(targetSection);
+            if (section) section.classList.add('active');
+
+            // Refresh messages when discuss tab is opened
+            if (targetSection === 'discuss-section') {
+                loadMessages();
+            }
         });
     });
 }
 
 // ============================================
-// CHAT FUNCTIONS
+// CHAT CORE FUNCTIONS
 // ============================================
 
 /**
@@ -114,10 +127,16 @@ function joinChat() {
  * Show chat area and hide signup
  */
 function showChatArea() {
-    document.getElementById('chatSignup').style.display = 'none';
-    document.getElementById('chatArea').style.display = 'flex';
-    document.getElementById('currentUsername').textContent = currentUsername;
-    document.getElementById('messageInput').focus();
+    const chatSignup = document.getElementById('chatSignup');
+    const chatArea = document.getElementById('chatArea');
+    const currentUsername_el = document.getElementById('currentUsername');
+    
+    if (chatSignup) chatSignup.style.display = 'none';
+    if (chatArea) chatArea.style.display = 'flex';
+    if (currentUsername_el) currentUsername_el.textContent = currentUsername;
+    
+    const msgInput = document.getElementById('messageInput');
+    if (msgInput) msgInput.focus();
 }
 
 /**
@@ -133,23 +152,40 @@ function sendMessage() {
         return;
     }
 
-    // Create message object
-    const message = {
-        username: currentUsername,
-        text: messageText,
-        timestamp: new Date().toLocaleTimeString('en-US', { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            second: '2-digit'
-        }),
-        id: Date.now()
-    };
-
     // Get existing messages
     let messages = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 
-    // Add new message
-    messages.push(message);
+    if (editingMessageId !== null) {
+        // Edit existing message
+        const msgIndex = messages.findIndex(m => m.id === editingMessageId);
+        if (msgIndex !== -1) {
+            messages[msgIndex].text = messageText;
+            messages[msgIndex].edited = true;
+            messages[msgIndex].editedTime = new Date().toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+        editingMessageId = null;
+        
+        const sendBtn = document.getElementById('sendBtn');
+        if (sendBtn) sendBtn.textContent = 'Send';
+    } else {
+        // Create new message
+        const message = {
+            username: currentUsername,
+            text: messageText,
+            timestamp: new Date().toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            }),
+            id: Date.now(),
+            edited: false
+        };
+        messages.push(message);
+    }
 
     // Keep only last 100 messages
     if (messages.length > 100) {
@@ -174,20 +210,10 @@ function sendMessage() {
  */
 function loadMessages() {
     const messagesContainer = document.getElementById('messagesContainer');
-
-    // If discuss tab not active, skip updating to save work
-    const discussTab = document.getElementById('discuss-tab');
-    if (discussTab && !discussTab.classList.contains('active')) {
-        return;
-    }
+    if (!messagesContainer) return;
 
     // Get messages from localStorage
     let messages = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-
-    const currentJSON = JSON.stringify(messages);
-    // If nothing changed since last render, skip DOM update
-    if (_lastMessagesJSON === currentJSON) return;
-    _lastMessagesJSON = currentJSON;
 
     if (messages.length === 0) {
         messagesContainer.innerHTML = '<div class="empty-messages">No messages yet. Be the first to discuss!</div>';
@@ -200,12 +226,22 @@ function loadMessages() {
     messages.forEach(message => {
         const isOwnMessage = message.username === currentUsername;
         const messageClass = isOwnMessage ? 'own' : '';
+        const editedLabel = message.edited ? '<span class="message-edited">(edited)</span>' : '';
 
         messagesHTML += `
-            <div class="message ${messageClass}">
+            <div class="message ${messageClass}" data-message-id="${message.id}">
                 <div class="message-header">
-                    <span class="message-username">👤 ${escapeHTML(message.username)}</span>
-                    <span class="message-time">${message.timestamp}</span>
+                    <div class="message-info">
+                        <span class="message-username">👤 ${escapeHTML(message.username)}</span>
+                        <span class="message-time">${message.timestamp}</span>
+                        ${editedLabel}
+                    </div>
+                    ${isOwnMessage ? `
+                        <div class="message-actions">
+                            <button class="msg-edit-btn" onclick="editMessage(${message.id}, '${escapeHTML(message.text).replace(/'/g, "&apos;")}')">✏️ Edit</button>
+                            <button class="msg-delete-btn" onclick="deleteMessage(${message.id})">🗑️ Delete</button>
+                        </div>
+                    ` : ''}
                 </div>
                 <div class="message-text">${escapeHTML(message.text)}</div>
             </div>
@@ -219,18 +255,57 @@ function loadMessages() {
 }
 
 /**
+ * Edit message
+ */
+function editMessage(messageId, messageText) {
+    editingMessageId = messageId;
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    
+    if (messageInput) {
+        messageInput.value = messageText;
+        messageInput.focus();
+    }
+    
+    if (sendBtn) {
+        sendBtn.textContent = 'Update Message';
+    }
+}
+
+/**
+ * Delete message
+ */
+function deleteMessage(messageId) {
+    if (!confirm('Delete this message?')) return;
+
+    let messages = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    messages = messages.filter(m => m.id !== messageId);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    
+    loadMessages();
+}
+
+/**
  * Logout
  */
 function logout() {
     if (confirm('Are you sure you want to logout?')) {
         localStorage.removeItem(USERNAME_KEY);
         currentUsername = null;
+        editingMessageId = null;
 
-        // Hide chat area and show signup
-        document.getElementById('chatArea').style.display = 'none';
-        document.getElementById('chatSignup').style.display = 'flex';
-        document.getElementById('usernameInput').value = '';
-        document.getElementById('usernameInput').focus();
+        const chatArea = document.getElementById('chatArea');
+        const chatSignup = document.getElementById('chatSignup');
+        const usernameInput = document.getElementById('usernameInput');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        
+        if (chatArea) chatArea.style.display = 'none';
+        if (chatSignup) chatSignup.style.display = 'flex';
+        if (usernameInput) usernameInput.value = '';
+        if (messageInput) messageInput.value = '';
+        if (sendBtn) sendBtn.textContent = 'Send';
+        if (usernameInput) usernameInput.focus();
     }
 }
 
@@ -244,32 +319,17 @@ function escapeHTML(text) {
 }
 
 // ============================================
-// UTILITY FUNCTIONS
+// UTILITY FUNCTIONS (For testing/debugging)
 // ============================================
 
 /**
- * Clear all chat messages (for testing)
+ * Clear all chat messages
  */
 function clearAllMessages() {
     if (confirm('This will delete all messages. Are you sure?')) {
         localStorage.removeItem(STORAGE_KEY);
         loadMessages();
     }
-}
-
-/**
- * Export chat history
- */
-function exportChatHistory() {
-    const messages = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    const dataStr = JSON.stringify(messages, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'chat-history.json';
-    link.click();
-    URL.revokeObjectURL(url);
 }
 
 /**
@@ -289,26 +349,3 @@ function getChatStats() {
         }))
     };
 }
-
-// ============================================
-// CONSOLE COMMANDS (For debugging)
-// ============================================
-
-/*
-In browser console, you can use:
-
-// Clear all messages
-clearAllMessages();
-
-// Export chat history
-exportChatHistory();
-
-// Get chat statistics
-console.log(getChatStats());
-
-// Get all messages
-console.log(JSON.parse(localStorage.getItem('strangerThingsForum_messages')));
-
-// Set debug mode
-window.debugChat = true;
-*/
